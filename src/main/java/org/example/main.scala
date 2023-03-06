@@ -1,21 +1,19 @@
 package org.example
 
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
-import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.streaming.api.scala._
-/*
-kafka/bin/kafka-topics.sh --bootstrap-server kafka2:9092 --create --topic flink-example --partitions 3 --replication-factor 3
- */
+import org.example.connection.AppParameters
+
 object ReadFromKafka extends App{
   private val env = StreamExecutionEnvironment.getExecutionEnvironment
   private val kafkaSource = KafkaSource.builder()
-    .setBootstrapServers("172.18.241.143:31064")
-    .setTopics("enabiz-mutation-223")
+    .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
+    .setTopics("enabiz-mutation-201")
     .setGroupId("flink-consumer-group")
     .setStartingOffsets(OffsetsInitializer.latest())
-    .setValueOnlyDeserializer(new SimpleStringSchema())
+    .setValueOnlyDeserializer(new EventDeserializationSchema())
     .build()
 
   private val lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source")
@@ -24,6 +22,8 @@ object ReadFromKafka extends App{
 
   env.execute("Read from Kafka")
 
-
+//  val writerConfig = KuduWriterConfig.Builder.setMasters(AppParameters.KUDU_MASTERS).build
+//
+//  val sink = new Nothing(writerConfig, KuduTableInfo.forTable("AlreadyExistingTable"), new Nothing(Array[String]("col1", "col2", "col3"), AbstractSingleOperationMapper.KuduOperation.UPSERT))
 
 }
