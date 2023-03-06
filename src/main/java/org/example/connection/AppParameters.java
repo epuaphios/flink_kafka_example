@@ -1,4 +1,4 @@
-package org.streaming.connection;
+package org.example.connection;
 
 public class AppParameters {
     public static String DATABASE_NAME="";
