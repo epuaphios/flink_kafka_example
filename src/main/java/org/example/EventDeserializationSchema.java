@@ -34,6 +34,13 @@ public class EventDeserializationSchema extends AbstractDeserializationSchema<Js
      */
     @Override
     public JsonRoot deserialize(byte[] message) throws IOException {
-        return objectMapper.readValue(message, JsonRoot.class);
+        try {
+            return objectMapper.readValue(message, JsonRoot.class);
+        }
+        catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        }
+
     }
 }

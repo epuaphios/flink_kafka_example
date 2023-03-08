@@ -35,9 +35,9 @@ public class main2 {
 
         KuduSink<Row> sink = new KuduSink<>(
                 writerConfig,
-                KuduTableInfo.forTable("AlreadyExistingTable"),
+                KuduTableInfo.forTable("p201_hasta_patoloji_bilgileri"),
                 new RowOperationMapper(
-                        new String[]{"idhash"},
+                        new String[]{"systakipno"},
                         AbstractSingleOperationMapper.KuduOperation.UPSERT)
         );
 
@@ -49,8 +49,8 @@ public class main2 {
         DataStream<Row> row = lines.map(new MapFunction<JsonRoot, Row>() {
             @Override
             public Row map(JsonRoot e) throws Exception {
-                Row kuduRow = new Row(2);
-                kuduRow.setField(0, e.idhash());
+                Row kuduRow = new Row(1);
+                kuduRow.setField(0, e.key());
                 return kuduRow;
             }});
 
