@@ -1,16 +1,14 @@
-/*
 package org.example
 
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.connectors.kudu.connector.KuduTableInfo
-import org.apache.flink.connectors.kudu.connector.writer.{AbstractSingleOperationMapper, KuduWriterConfig, PojoOperationMapper, RowOperationMapper}
+import org.apache.flink.connectors.kudu.connector.writer.{AbstractSingleOperationMapper, KuduWriterConfig, RowOperationMapper}
 import org.apache.flink.connectors.kudu.streaming.KuduSink
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.types.Row
 import org.example.connection.AppParameters
-import org.example.packet.JsonRoot
 
 object ReadFromKafka extends App{
 
@@ -36,17 +34,17 @@ object ReadFromKafka extends App{
 
 
   private val lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source")
-
-  val a:DataStream[String]  = lines.map(x => x.idhash)
+  val kuduRow = new Row(1)
+  val a:DataStream[Row]  = lines.map(x => {
+    kuduRow.setField(0, x.idhash)
+    kuduRow
+  })
 
   a.addSink(sink)
 
-  // sleep to allow eventual consistency to finish
-  Thread.sleep(1000)
 
-  sink.close
 
   env.execute("Read from Kafka")
 
 }
-*/
+
