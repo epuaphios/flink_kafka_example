@@ -17,16 +17,15 @@ object ReadFromKafka extends App{
   private val env = StreamExecutionEnvironment.getExecutionEnvironment
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-201"
-  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, "appName")
+  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, "appname")
 
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
     .setTopics("enabiz-mutation-201")
     .setGroupId("flink-consumer-group")
-    .setStartFromSpecificOffsets(fromOffsets)
+    .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
     .setValueOnlyDeserializer(new EventDeserializationSchema())
-    .setStartingOffsets(OffsetsInitializer.committedOffsets(OffsetResetStrategy.LATEST));
-  .build()
+    .build()
 
 
   private val writerConfig = KuduWriterConfig.Builder.setMasters(AppParameters.KUDU_MASTERS).build
