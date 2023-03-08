@@ -9,19 +9,24 @@ import org.apache.flink.connectors.kudu.streaming.KuduSink
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.types.Row
 import org.example.connection.AppParameters
+import org.example.connection.scylla.ScyllaSessionBuild.getLastCommittedOffsets
 
 object ReadFromKafka extends App{
 
 
   private val env = StreamExecutionEnvironment.getExecutionEnvironment
 
+  AppParameters.TOPIC_NAME = "enabiz-mutation-201"
+  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, "appName")
+
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
     .setTopics("enabiz-mutation-201")
     .setGroupId("flink-consumer-group")
-    .setStartingOffsets(OffsetsInitializer.latest())
+    .setStartFromSpecificOffsets(fromOffsets)
     .setValueOnlyDeserializer(new EventDeserializationSchema())
-    .build()
+    .setStartingOffsets(OffsetsInitializer.committedOffsets(OffsetResetStrategy.LATEST));
+  .build()
 
 
   private val writerConfig = KuduWriterConfig.Builder.setMasters(AppParameters.KUDU_MASTERS).build
