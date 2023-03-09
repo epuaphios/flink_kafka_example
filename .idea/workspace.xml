@@ -5,13 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2611ad51-3259-4773-b217-b2b929fdbbd7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/connection/AppParameters.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/main.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/packet/packet_201.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/packet/packet_201.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +140,7 @@
       <option name="presentableId" value="Default" />
       <updated>1678037719068</updated>
       <workItem from="1678283167847" duration="949000" />
-      <workItem from="1678366264864" duration="7008000" />
+      <workItem from="1678366264864" duration="8148000" />
     </task>
     <task id="LOCAL-00001" summary="kudu">
       <created>1678284471759</created>
@@ -160,7 +156,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678303931700</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="kudu">
+      <created>1678373853808</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1678373853808</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

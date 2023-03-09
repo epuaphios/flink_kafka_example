@@ -12,7 +12,7 @@ object Parsers {
             row.setField(1, null)
           }
           else {
-            row.setField(1, x.ISTEM_ZAMANI.`@value`)
+            row.setField(1, Some(x.ISTEM_ZAMANI).value)
           }
           if (x.TETKIK_SONUCU == null) {
             row.setField(2, null)
