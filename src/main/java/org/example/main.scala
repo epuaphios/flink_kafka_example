@@ -1,6 +1,7 @@
 package org.example
 
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
+import org.apache.flink.configuration.{ConfigConstants, Configuration}
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.connectors.kudu.connector.KuduTableInfo
@@ -9,21 +10,27 @@ import org.apache.flink.connectors.kudu.streaming.KuduSink
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.types.Row
 import org.example.connection.AppParameters
+import org.example.connection.scylla.ScyllaSessionBuild
 import org.example.connection.scylla.ScyllaSessionBuild.getLastCommittedOffsets
+import org.example.parser.Parsers.parse201
 
-object ReadFromKafka extends App{
+object main extends App{
 
-
-  private val env = StreamExecutionEnvironment.getExecutionEnvironment
+  val conf = new Configuration();
+  conf.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true)
+  val env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(conf)
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-201"
+  new ScyllaSessionBuild()
   val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, "appname")
+//  closeScyllaSession()
 
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
     .setTopics("enabiz-mutation-201")
-    .setGroupId("flink-consumer-group")
+    //.setGroupId("flink-consumer-group")
     .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
+//    .setStartingOffsets(OffsetsInitializer.earliest())
     .setValueOnlyDeserializer(new EventDeserializationSchema())
     .build()
 
@@ -33,18 +40,27 @@ object ReadFromKafka extends App{
   private val sink:KuduSink[Row] = new KuduSink(
     writerConfig,
     KuduTableInfo.forTable("p201_hasta_patoloji_bilgileri"),
-    new RowOperationMapper(Array[String]("idhash"), AbstractSingleOperationMapper.KuduOperation.INSERT)
+    new RowOperationMapper(Array[String]("systakipno","istem_zamani","tetkik_sonucu"), AbstractSingleOperationMapper.KuduOperation.UPSERT)
   )
 
 
   private val lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source")
-  val kuduRow = new Row(1)
-  val a:DataStream[Row]  = lines.map(x => {
-    kuduRow.setField(0, x.idhash)
-    kuduRow
-  })
 
-  a.addSink(sink)
+
+  private val a:DataStream[Row]  = lines.map(x => {
+    if (x.content.HASTA_PATOLOJI_BILGILERI.PATOLOJI_BILGISI != null) {
+      parse201(x)
+    }
+    else {
+      null
+    }
+  })
+  try{
+    a.addSink(sink)
+  }
+  catch {
+    case e: Exception => println(e)
+  }
 
 
 
