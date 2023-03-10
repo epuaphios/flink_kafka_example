@@ -97,10 +97,11 @@ public class DateUtil implements Serializable {
             DateFormat dateFormat = datePatternFormatters.get(datePattern);
             dateFormat.setTimeZone(utc);
             date = dateFormat.parse(dateString);
+
         } catch (ParseException | NullPointerException e) {
             return null;
         }
-        long unixTime = (long) date.getTime();
+        long unixTime = date.getTime();
         // min: 1900, max: 2030
         if (unixTime > -2208949632000L && unixTime < 1893456038000L) {
             return unixTime * 1000;

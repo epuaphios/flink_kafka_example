@@ -11,20 +11,32 @@ public abstract class Helper {
     public static HashMap<Class, Field> valueGetters = new HashMap<>();
     public Map<String, Integer> sequenceIds = new HashMap<>();
 
-    public static String getValue(Object object) {
-              object.getClass().getDeclaredField("$atvalue").toString()
+    public static String getValue(Object object) throws NoSuchFieldException, IllegalAccessException {
+        try {
+              Field a = object.getClass().getDeclaredField("$atvalue");
+              a.setAccessible(true);
+              Object value = a.get(object);
+              return value.toString();
+    }
+    catch (NoSuchFieldException e) {
+        return null;
+    }
+    }
 
-        }
-
-    public static Long getDatetimeValue(Object object) {
+    public static Long getDatetimeValue(Object object) throws NoSuchFieldException, IllegalAccessException {
+        try {
         String stringValue = getStringValue(object);
         if (stringValue != null && !stringValue.trim().equals("")) {
             return DateUtil.toImpalaCompatibleUnixTime(stringValue);
         }
         return null;
+        }
+        catch (NoSuchFieldException e) {
+            return null;
+        }
     }
 
-    public static String getStringValue(Object object) {
+    public static String getStringValue(Object object) throws NoSuchFieldException, IllegalAccessException {
         // TODO: Move to global or use global if exists
         if (object != null) {
             String value = getValue(object);
@@ -35,7 +47,7 @@ public abstract class Helper {
         return null;
     }
 
-    public static Double getDoubleValue(Object object) {
+    public static Double getDoubleValue(Object object) throws NoSuchFieldException, IllegalAccessException {
         // TODO: Move to global or use global if exists
         String stringValue = getStringValue(object);
         Double doubleValue = null;
@@ -70,7 +82,7 @@ public abstract class Helper {
         sequenceIds.put(sequence, id);
         return id;
     }
-    public static Integer getIntegerValue(Object object) {
+    public static Integer getIntegerValue(Object object) throws NoSuchFieldException, IllegalAccessException {
         // TODO: Move to global or use global if exists
         String stringValue = getStringValue(object);
         Integer integerValue = null;
