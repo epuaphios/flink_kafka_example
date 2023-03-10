@@ -1,5 +1,6 @@
 package org.example.parser;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -7,25 +8,14 @@ import java.util.Map;
 
 public abstract class Helper {
 
-    public static HashMap<Class, Method> valueGetters = new HashMap<>();
+    public static HashMap<Class, Field> valueGetters = new HashMap<>();
     public Map<String, Integer> sequenceIds = new HashMap<>();
 
     public static String getValue(Object object) {
-        try {
-            Class cls = object.getClass();
-            if (!valueGetters.containsKey(cls)) {
-                valueGetters.put(cls, object.getClass().getMethod("getValue"));
-            }
-            Method valueGetter = valueGetters.get(cls);
-            return (String) valueGetter.invoke(object);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            if (object instanceof String) {
-                return (String) object;
-            }
-            e.printStackTrace();
-            return null;
+              object.getClass().getDeclaredField("$atvalue").toString()
+
         }
-    }
+
     public static Long getDatetimeValue(Object object) {
         String stringValue = getStringValue(object);
         if (stringValue != null && !stringValue.trim().equals("")) {
