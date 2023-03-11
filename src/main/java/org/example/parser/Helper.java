@@ -11,7 +11,7 @@ public abstract class Helper {
     public static HashMap<Class, Field> valueGetters = new HashMap<>();
     public Map<String, Integer> sequenceIds = new HashMap<>();
 
-    public static String getValue(Object object) throws NoSuchFieldException, IllegalAccessException {
+    public static String getValue(Object object) throws IllegalAccessException {
         try {
               Field a = object.getClass().getDeclaredField("$atvalue");
               a.setAccessible(true);
@@ -23,7 +23,7 @@ public abstract class Helper {
     }
     }
 
-    public static Long getDatetimeValue(Object object) throws NoSuchFieldException, IllegalAccessException {
+    public static Long getDatetimeValue(Object object) throws  IllegalAccessException {
         try {
         String stringValue = getStringValue(object);
         if (stringValue != null && !stringValue.trim().equals("")) {
@@ -42,6 +42,9 @@ public abstract class Helper {
             String value = getValue(object);
             if (value != null && !value.trim().equals("")) {
                 return value.trim();
+            }
+            if (value.length() > 65536) {
+                return value.substring(0, 65536);
             }
         }
         return null;

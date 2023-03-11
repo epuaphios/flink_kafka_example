@@ -1,6 +1,7 @@
 package org.example.parser;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -94,11 +95,12 @@ public class DateUtil implements Serializable {
                     datePattern = "0";
                     break;
             }
-            DateFormat dateFormat = datePatternFormatters.get(datePattern);
-            dateFormat.setTimeZone(utc);
-            date = dateFormat.parse(dateString);
+            DateTimeFormatter dateFormatter = DateTimeFormat.forPattern(datePattern);
+            org.joda.time.LocalDateTime dt = dateFormatter.parseLocalDateTime(dateString);
+            date = dt.toDate();
 
-        } catch (ParseException | NullPointerException e) {
+        } catch (Exception e) {
+            System.out.print(dateString+ " "+e.getMessage());
             return null;
         }
         long unixTime = date.getTime();

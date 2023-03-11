@@ -55,16 +55,14 @@ object main extends App{
       null
     }
   })
-  try{
+//  try{
     a.addSink(sink)
-  }
-  catch {
-    case e: Exception => println(e)
-  }
+
+    env.execute("Read from Kafka")
 
 
 
-  env.execute("Read from Kafka")
+
 
 }
 
