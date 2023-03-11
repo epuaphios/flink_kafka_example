@@ -2,9 +2,9 @@ package org.example.parser;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public abstract class Helper {
 
@@ -41,10 +41,12 @@ public abstract class Helper {
         if (object != null) {
             String value = getValue(object);
             if (value != null && !value.trim().equals("")) {
-                return value.trim();
-            }
-            if (value.length() > 65536) {
-                return value.substring(0, 65536);
+                if (value.length() > 1000) {
+                    return value.substring(0, 1000);
+                }
+                else {
+                    return value.trim();
+                }
             }
         }
         return null;
