@@ -9,22 +9,10 @@ import java.util.*;
 
 @SuppressWarnings("Duplicates")
 public class DateUtil implements Serializable {
-    private static Locale TRLocale = new Locale("tr", "TR");
-    private static final String notdefined = "Belirtilmemiş";
-    private DateTimeFormatter formatter;
-    private String dateString;
-    private org.joda.time.LocalDateTime dt;
-    private String year = null;
-    private String monthNumber = null;
-    private String dayNumber = null;
-    private static TimeZone utc = TimeZone.getTimeZone("UTC");
-    private static String timeZone = "Europe/Istanbul";
-
 
     public DateUtil() {
 
     }
-
 
     public static Long toImpalaCompatibleUnixTime(String dateString) {
         String datePattern;
@@ -62,11 +50,4 @@ public class DateUtil implements Serializable {
 
     }
 
-    public static Long toImpalaCompatibleUnixDate(String dateString) {
-        Long unixTime = null;
-        if (dateString != null && !dateString.trim().equals("")) {
-            unixTime = DateUtil.toImpalaCompatibleUnixTime(dateString.substring(0, 8));
-        }
-        return unixTime;
-    }
 }
