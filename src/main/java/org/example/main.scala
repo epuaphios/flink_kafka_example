@@ -31,7 +31,7 @@ object main extends App {
     .setTopics("enabiz-mutation-201")
     //.setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
     .setGroupId("appname")
-    .setValueOnlyDeserializer(new EventDeserializationSchema())
+    .setDeserializer(new EventDeserializationSchema())
     .build()
 
 
