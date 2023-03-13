@@ -3,6 +3,7 @@ package org.example
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
 import org.apache.flink.configuration.{ConfigConstants, Configuration}
 import org.apache.flink.connector.kafka.source.KafkaSource
+import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.connectors.kudu.connector.KuduTableInfo
 import org.apache.flink.connectors.kudu.connector.writer.{AbstractSingleOperationMapper, KuduWriterConfig, RowOperationMapper}
 import org.apache.flink.connectors.kudu.streaming.KuduSink
@@ -30,7 +31,7 @@ object main extends App {
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
     .setTopics("enabiz-mutation-201")
-    //.setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
+    .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
     .setGroupId("appname")
     .setDeserializer(new KafkaUsageRecordDeserializationSchema())
     .build()
@@ -49,9 +50,8 @@ object main extends App {
 
 
   private val a:DataStream[Row]  = lines.map(x => {
-    new ScyllaSessionBuild()
     val sessionSylla = ScyllaSessionBuild.getSession()
-    savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
+    savedOffset("appname", x.getTopic, x.getPartition, x.getOffset, sessionSylla)
     if (x.getValue.content.HASTA_PATOLOJI_BILGILERI.PATOLOJI_BILGISI != null) {
       parse201(x.getValue)
     }

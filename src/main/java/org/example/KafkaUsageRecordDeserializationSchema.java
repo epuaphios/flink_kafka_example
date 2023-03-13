@@ -10,8 +10,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.example.packet.JsonRoot;
 import org.example.packet.KafkaClass;
 
-import java.io.IOException;
-
 
 public class KafkaUsageRecordDeserializationSchema implements KafkaRecordDeserializationSchema<KafkaClass> {
 
@@ -34,10 +32,19 @@ public class KafkaUsageRecordDeserializationSchema implements KafkaRecordDeseria
     }
 
     @Override
-    public void deserialize(ConsumerRecord<byte[], byte[]> consumerRecord, Collector<KafkaClass> collector) throws IOException {
-        JsonRoot jsonRoot = objectMapper.readValue(consumerRecord.value(), JsonRoot.class);
-        KafkaClass kafkaClass = new KafkaClass(consumerRecord.offset(),consumerRecord.partition(),consumerRecord.topic(),jsonRoot);
-        collector.collect(kafkaClass);
+    public void deserialize(ConsumerRecord<byte[], byte[]> consumerRecord, Collector<KafkaClass> collector) {
+        JsonRoot jsonRoot;
+        try {
+            jsonRoot = objectMapper.readValue(consumerRecord.value(), JsonRoot.class);
+            KafkaClass kafkaClass = new KafkaClass(consumerRecord.offset(),consumerRecord.partition(),consumerRecord.topic(),jsonRoot);
+            collector.collect(kafkaClass);
+           } catch (Exception e) {
+
+            System.out.println("Error: " + e.getMessage());
+
+           }
+
+
     }
 
 }
