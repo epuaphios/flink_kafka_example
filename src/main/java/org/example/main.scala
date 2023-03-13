@@ -9,6 +9,7 @@ import org.apache.flink.connectors.kudu.streaming.KuduSink
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.types.Row
 import org.example.connection.AppParameters
+import org.example.connection.scylla.ScyllaQuery.savedOffset
 import org.example.connection.scylla.ScyllaSessionBuild
 import org.example.connection.scylla.ScyllaSessionBuild.getLastCommittedOffsets
 import org.example.parser.Parsers.parse201
@@ -31,7 +32,7 @@ object main extends App {
     .setTopics("enabiz-mutation-201")
     //.setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
     .setGroupId("appname")
-    .setDeserializer(new EventDeserializationSchema())
+    .setDeserializer(new KafkaUsageRecordDeserializationSchema())
     .build()
 
 
@@ -47,13 +48,12 @@ object main extends App {
   private val lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source")
 
 
-
-
-
-
   private val a:DataStream[Row]  = lines.map(x => {
-    if (x.content.HASTA_PATOLOJI_BILGILERI.PATOLOJI_BILGISI != null) {
-      parse201(x)
+    new ScyllaSessionBuild()
+    val sessionSylla = ScyllaSessionBuild.getSession()
+    savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
+    if (x.getValue.content.HASTA_PATOLOJI_BILGILERI.PATOLOJI_BILGISI != null) {
+      parse201(x.getValue)
     }
     else {
       null

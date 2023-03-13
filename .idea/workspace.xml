@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2611ad51-3259-4773-b217-b2b929fdbbd7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/packet/KafkaClass.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/EventDeserializationSchema.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/EventDeserializationSchema.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/EventDeserializationSchema.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/KafkaUsageRecordDeserializationSchema.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/main.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/main2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/main2.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,6 +147,7 @@
       <workItem from="1678566443315" duration="10817000" />
       <workItem from="1678694439623" duration="2347000" />
       <workItem from="1678703243567" duration="124000" />
+      <workItem from="1678703383927" duration="2923000" />
     </task>
     <task id="LOCAL-00001" summary="kudu">
       <created>1678284471759</created>
@@ -195,7 +198,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678575793629</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="dateutil fix">
+      <created>1678703492943</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1678703492943</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

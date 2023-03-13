@@ -4,16 +4,20 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
+import org.apache.flink.connector.kafka.source.reader.deserializer.KafkaRecordDeserializationSchema;
 import org.apache.flink.connectors.kudu.connector.KuduTableInfo;
 import org.apache.flink.connectors.kudu.connector.writer.AbstractSingleOperationMapper;
 import org.apache.flink.connectors.kudu.connector.writer.KuduWriterConfig;
 import org.apache.flink.connectors.kudu.connector.writer.RowOperationMapper;
 import org.apache.flink.connectors.kudu.streaming.KuduSink;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.types.Row;
 import org.example.connection.AppParameters;
 import org.example.packet.JsonRoot;
+import org.example.packet.KafkaClass;
+
 public class main2 {
 
 
@@ -22,12 +26,12 @@ public class main2 {
 
      final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-    KafkaSource<JsonRoot> kafkaSource =
-            KafkaSource.<JsonRoot>builder()
+    KafkaSource<KafkaClass> kafkaSource =
+            KafkaSource.<KafkaClass>builder()
                     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
                     .setTopics("enabiz-mutation-201")
                     .setStartingOffsets(OffsetsInitializer.earliest())
-                    .setValueOnlyDeserializer(new EventDeserializationSchema())
+                    .setDeserializer((KafkaRecordDeserializationSchema<KafkaClass>) new MyDeserializationSchema())
                     .build();
 
 
@@ -44,11 +48,11 @@ public class main2 {
 
 
 
-        DataStream<JsonRoot> lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source");
+        DataStreamSource<KafkaClass> lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source");
 
-        DataStream<Row> row = lines.map(new MapFunction<JsonRoot, Row>() {
+        DataStream<Row> row = lines.map(new MapFunction<KafkaClass, Row>() {
             @Override
-            public Row map(JsonRoot e) throws Exception {
+            public Row map(KafkaClass e) throws Exception {
                 Row kuduRow = new Row(1);
                 kuduRow.setField(0, e.key());
                 return kuduRow;
