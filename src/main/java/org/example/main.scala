@@ -20,7 +20,7 @@ object main extends App {
   val conf = new Configuration();
   conf.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true)
   val env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(conf)
-  env.setParallelism(4)
+  env.setParallelism(14)
 
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-201"
@@ -60,7 +60,7 @@ object main extends App {
     }
   })
 
-    a.addSink(sink)
+    a.addSink(sink).name("Kudu Sink")
 
     env.execute("Read from Kafka")
 
