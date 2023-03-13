@@ -22,16 +22,16 @@ object main extends App {
   env.setParallelism(14)
 
 
-  AppParameters.TOPIC_NAME = "enabiz-mutation-201"
+  AppParameters.TOPIC_NAME = "enabiz-mutation-409"
   new ScyllaSessionBuild()
-  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, "appname")
+  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, "flink-test")
 //  closeScyllaSession()
 
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
-    .setTopics("enabiz-mutation-201")
+    .setTopics("enabiz-mutation-409")
     .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
-    .setGroupId("appname")
+//    .setGroupId("appname")
     .setDeserializer(new KafkaUsageRecordDeserializationSchema())
     .build()
 
@@ -40,7 +40,7 @@ object main extends App {
 
   private val sink:KuduSink[Row] = new KuduSink(
     writerConfig,
-    KuduTableInfo.forTable("p201_hasta_patoloji_bilgileri"),
+    KuduTableInfo.forTable("p409_radyoloji_sonuc_kayit"),
     new RowOperationMapper(Array[String]( "systakipno" ,"kabul_zamani" ,"id" ,"id_second" ,"idhash" ,"hizmet_sunucu" ,"radyoloji_loinc" ,"radyoloji_loinc_code" ,"islem_referans_numarasi" ,"rapor_onaylanma_zamani" ,"sonuc_baslik" ,"sonuc_aciklama" ,"last_updated"), AbstractSingleOperationMapper.KuduOperation.UPSERT)
   )
 

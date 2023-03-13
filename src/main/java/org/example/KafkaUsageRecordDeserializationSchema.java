@@ -24,27 +24,22 @@ public class KafkaUsageRecordDeserializationSchema implements KafkaRecordDeseria
     @Override
     public void open(DeserializationSchema.InitializationContext context) throws Exception {
         KafkaRecordDeserializationSchema.super.open(context);
-        objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
-                .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
     }
 
     @Override
     public void deserialize(ConsumerRecord<byte[], byte[]> consumerRecord, Collector<KafkaClass> collector) {
-        JsonRoot jsonRoot;
         try {
-            jsonRoot = objectMapper.readValue(consumerRecord.value(), JsonRoot.class);
+            objectMapper = new ObjectMapper()
+                    .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+                    .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+            JsonRoot jsonRoot = objectMapper.readValue(consumerRecord.value() , JsonRoot.class);
             KafkaClass kafkaClass = new KafkaClass(consumerRecord.offset(),consumerRecord.partition(),consumerRecord.topic(),jsonRoot);
             collector.collect(kafkaClass);
            } catch (Exception e) {
-
             System.out.println("Error: " + e.getMessage());
-
            }
-
-
     }
 
 }
