@@ -51,7 +51,7 @@ object main extends App {
   private val a:DataStream[Row]  = lines.map(x => {
     val sessionSylla = ScyllaSessionBuild.getSession()
     savedOffset("appname", x.getTopic, x.getPartition, x.getOffset, sessionSylla)
-    if (x.getValue.content.HASTA_PATOLOJI_BILGILERI.PATOLOJI_BILGISI != null) {
+    if (x.getValue.content.RADYOLOJI_SONUC_KAYIT != null) {
       parse201(x.getValue)
     }
     else {
