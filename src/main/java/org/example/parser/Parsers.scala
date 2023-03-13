@@ -1,19 +1,35 @@
 package org.example.parser
 import org.apache.flink.types.Row
 import org.example.packet.JsonRoot
-import org.example.parser.Helper.{getDatetimeValue, getStringValue}
+import org.example.parser.Helper.{getDatetimeValue, getStringCode, getStringValue}
 
 object Parsers extends Helper {
 
    def parse201(jsonRoot: JsonRoot) = {
       val row = new Row(3)
       row.setField(0, jsonRoot.key)
-      jsonRoot.content.HASTA_PATOLOJI_BILGILERI.PATOLOJI_BILGISI.forEach(
-        x => {
-          row.setField(1,getDatetimeValue(x.ISTEM_ZAMANI))
-          row.setField(2,getStringValue(x.TETKIK_SONUCU))
+      row.setField(1,jsonRoot.kabulzamani)
+      row.setField(5,jsonRoot.idhash)
+
+     jsonRoot.content.RADYOLOJI_SONUC_KAYIT.RADYOLOJI_BILGISI.zipWithIndex.foreach {
+        case (value, index) =>
+          row.setField(2,index)
+          row.setField(6,null)
+          row.setField(7,getStringValue(value.RADYOLOJI_LOINC))
+          row.setField(8,getStringCode(value.RADYOLOJI_LOINC))
+          row.setField(9,getStringValue(value.ISLEM_REFERANS_NUMARASI))
+          row.setField(10,getDatetimeValue(value.RAPOR_ONAYLANMA_ZAMANI))
+          if (value.RAPOR_SONUC_BILGISI != null) {
+            value.RAPOR_SONUC_BILGISI.zipWithIndex.foreach {
+              case (value, index) =>
+                row.setField(3,index)
+                row.setField(11,getStringValue(value.SONUC_BASLIK))
+                row.setField(12,getStringValue(value.SONUC_ACIKLAMA))
+            }
+          }
+
         }
-      )
+
       row
     }
 

@@ -41,7 +41,7 @@ object main extends App {
   private val sink:KuduSink[Row] = new KuduSink(
     writerConfig,
     KuduTableInfo.forTable("p201_hasta_patoloji_bilgileri"),
-    new RowOperationMapper(Array[String]("systakipno","istem_zamani","tetkik_sonucu"), AbstractSingleOperationMapper.KuduOperation.UPSERT)
+    new RowOperationMapper(Array[String]( "systakipno" ,"kabul_zamani" ,"id" ,"id_second" ,"idhash" ,"hizmet_sunucu" ,"radyoloji_loinc" ,"radyoloji_loinc_code" ,"islem_referans_numarasi" ,"rapor_onaylanma_zamani" ,"sonuc_baslik" ,"sonuc_aciklama" ,"last_updated"), AbstractSingleOperationMapper.KuduOperation.UPSERT)
   )
 
 
