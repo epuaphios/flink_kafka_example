@@ -1,7 +1,6 @@
 package org.example
 
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
-import org.apache.flink.configuration.{ConfigConstants, Configuration}
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.connectors.kudu.connector.KuduTableInfo
@@ -17,9 +16,9 @@ import org.example.parser.Parsers.parse201
 
 object main extends App {
 
-  val conf = new Configuration();
-  conf.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true)
-  val env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(conf)
+//  val conf = new Configuration();
+//  conf.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true)
+  val env = StreamExecutionEnvironment.getExecutionEnvironment
   env.setParallelism(14)
 
 
