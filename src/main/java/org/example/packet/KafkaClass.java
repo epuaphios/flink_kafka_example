@@ -7,11 +7,11 @@ public class KafkaClass implements Serializable {
     Long offset;
     Integer partition;
     String topic;
-    JsonRoot value;
+    byte[] value;
 
 
 
-    public KafkaClass(Long offset, Integer partition, String topic, JsonRoot value) {
+    public KafkaClass(Long offset, Integer partition, String topic, byte[] value) {
         this.offset = offset;
         this.partition = partition;
         this.topic = topic;
@@ -42,11 +42,11 @@ public class KafkaClass implements Serializable {
         this.topic = topic;
     }
 
-    public JsonRoot getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(JsonRoot value) {
+    public void setValue(byte[] value) {
         this.value = value;
     }
 

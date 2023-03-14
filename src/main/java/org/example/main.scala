@@ -1,5 +1,7 @@
 package org.example
 
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
+import com.fasterxml.jackson.module.scala.{DefaultScalaModule, ScalaObjectMapper}
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
@@ -12,14 +14,15 @@ import org.example.connection.AppParameters
 import org.example.connection.scylla.ScyllaQuery.savedOffset
 import org.example.connection.scylla.ScyllaSessionBuild
 import org.example.connection.scylla.ScyllaSessionBuild.getLastCommittedOffsets
-import org.example.parser.Parsers.parse201
+import org.example.packet.JsonRoot
+import org.example.parser.Parsers.{parse201, parseCenter}
 
 object main extends App {
 
 //  val conf = new Configuration();
 //  conf.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true)
   val env = StreamExecutionEnvironment.getExecutionEnvironment
-  env.setParallelism(14)
+  env.setParallelism(1)
 
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-409"
@@ -48,24 +51,36 @@ object main extends App {
   private val lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source")
 
 
-  private val a:DataStream[Row]  = lines.map(x => {
+  private val Rows  = lines.map(x => {
     val sessionSylla = ScyllaSessionBuild.getSession()
     savedOffset("appname", x.getTopic, x.getPartition, x.getOffset, sessionSylla)
-    if (x.getValue.content.RADYOLOJI_SONUC_KAYIT != null) {
-      parse201(x.getValue)
+    val jsonRoot = mapperScala(x.getValue)
+    if (jsonRoot.content.RADYOLOJI_SONUC_KAYIT != null) {
+     jsonRoot.content.RADYOLOJI_SONUC_KAYIT.RADYOLOJI_BILGISI.zipWithIndex.foreach{ case (radyolojiBilgisi, index) =>
+          val row = parseCenter(jsonRoot)
+          parse201(radyolojiBilgisi, row, index)
+      }
     }
     else {
       null
     }
   })
 
-    a.addSink(sink).name("Kudu Sink")
+
+  Rows.addSink(sink).name("Kudu Sink")
 
     env.execute("Read from Kafka")
 
 
-
-
+  def mapperScala(x:Array[Byte])= {
+     val mapper = new ObjectMapper with ScalaObjectMapper
+     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+       .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
+       .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+       .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+    mapper.registerModule(DefaultScalaModule)
+    mapper.readValue(x, classOf[JsonRoot])
+     }
 
 }
 

@@ -48,6 +48,14 @@ public abstract class Helper {
         }
     }
 
+
+    public static Long getKabulZamaniValue(String stringValue) {
+            if (stringValue != null && !stringValue.trim().equals("")) {
+                return DateUtil.toImpalaCompatibleUnixTime(stringValue);
+            }
+            return null;
+    }
+
     public static String getStringValue(Object object) throws NoSuchFieldException, IllegalAccessException {
         // TODO: Move to global or use global if exists
         if (object != null) {

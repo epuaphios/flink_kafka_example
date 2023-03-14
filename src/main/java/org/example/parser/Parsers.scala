@@ -1,39 +1,35 @@
 package org.example.parser
 import org.apache.flink.types.Row
-import org.example.packet.JsonRoot
-import org.example.parser.Helper.{getDatetimeValue, getStringCode, getStringValue}
+import org.example.packet.{JsonRoot, RADYOLOJIBILGISI}
+import org.example.parser.Helper.{getDatetimeValue, getKabulZamaniValue, getStringCode, getStringValue}
 
+import java.time
+import scala.Int.MaxValue
 import scala.util.hashing.MurmurHash3
 
 object Parsers extends Helper {
 
-   def parse201(jsonRoot: JsonRoot) = {
-      val row = new Row(13)
-      row.setField(0, jsonRoot.key)
-      row.setField(1,jsonRoot.kabulzamani)
-      row.setField(5,MurmurHash3.stringHash(jsonRoot.idhash))
-
-     jsonRoot.content.RADYOLOJI_SONUC_KAYIT.RADYOLOJI_BILGISI.foreach {
-        case (value, index) =>
-          row.setField(2,index)
-          row.setField(6,null)
-          row.setField(7,getStringValue(value.RADYOLOJI_LOINC))
-          row.setField(8,getStringCode(value.RADYOLOJI_LOINC))
-          row.setField(9,getStringValue(value.ISLEM_REFERANS_NUMARASI))
-          row.setField(10,getDatetimeValue(value.RAPOR_ONAYLANMA_ZAMANI))
-          row.setField(13,null)
-          if (value.RAPOR_SONUC_BILGISI != null) {
-            value.RAPOR_SONUC_BILGISI.zipWithIndex.foreach {
-              case (value, index) =>
-                row.setField(3,index)
-                row.setField(11,getStringValue(value.SONUC_BASLIK))
-                row.setField(12,getStringValue(value.SONUC_ACIKLAMA))
-            }
-          }
-
-        }
-
-      row
+   def parse201(radyolojiBilgisi: RADYOLOJIBILGISI, row: Row, index: Int) = {
+          row.setField(2, index)
+          row.setField(4,null)
+          row.setField(5,getStringValue(radyolojiBilgisi.RADYOLOJI_LOINC))
+          row.setField(6,getStringCode(radyolojiBilgisi.RADYOLOJI_LOINC))
+          row.setField(7,getStringValue(radyolojiBilgisi.ISLEM_REFERANS_NUMARASI))
+          row.setField(8,getDatetimeValue(radyolojiBilgisi.RAPOR_ONAYLANMA_ZAMANI))
+          row.setField(9,time.LocalDateTime.now())
+          row
     }
+
+  def parseCenter(jsonRoot: JsonRoot): Row = {
+    val row = new Row(10)
+    row.setField(0, jsonRoot.key)
+    row.setField(1, getKabulZamaniValue(jsonRoot.kabulzamani))
+    row.setField(3, murmurHash(jsonRoot.idhash))
+    row
+  }
+
+  def murmurHash(idhash: String): String = {
+    (MurmurHash3.stringHash(idhash) + MaxValue).toString
+  }
 
 }

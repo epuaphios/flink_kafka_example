@@ -1,9 +1,12 @@
 package org.example.packet
 
-import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonInclude, JsonProperty}
 
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 case class JsonRoot(
-                        @JsonProperty("event") event: String
+                          @JsonProperty("event") event: String
                         , @JsonProperty("key") key: String
                         , @JsonProperty("cas") cas: String
                         , @JsonProperty("IDHash") idhash: String
