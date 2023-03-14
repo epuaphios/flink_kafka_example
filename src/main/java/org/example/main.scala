@@ -3,6 +3,7 @@ package org.example
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.{DefaultScalaModule, ScalaObjectMapper}
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
+import org.apache.flink.api.common.functions.FlatMapFunction
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.connectors.kudu.connector.KuduTableInfo
@@ -10,12 +11,15 @@ import org.apache.flink.connectors.kudu.connector.writer.{AbstractSingleOperatio
 import org.apache.flink.connectors.kudu.streaming.KuduSink
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.types.Row
+import org.apache.flink.util.Collector
 import org.example.connection.AppParameters
 import org.example.connection.scylla.ScyllaQuery.savedOffset
 import org.example.connection.scylla.ScyllaSessionBuild
 import org.example.connection.scylla.ScyllaSessionBuild.getLastCommittedOffsets
 import org.example.packet.JsonRoot
-import org.example.parser.Parsers.{parse201, parseCenter}
+import org.example.parser.Parsers.parse201
+
+import java.util
 
 object main extends App {
 
@@ -44,32 +48,39 @@ object main extends App {
   private val sink:KuduSink[Row] = new KuduSink(
     writerConfig,
     KuduTableInfo.forTable("p409_radyoloji_sonuc_kayit"),
-    new RowOperationMapper(Array[String]( "systakipno" ,"kabul_zamani" ,"id" ,"id_second" ,"idhash" ,"hizmet_sunucu" ,"radyoloji_loinc" ,"radyoloji_loinc_code" ,"islem_referans_numarasi" ,"rapor_onaylanma_zamani" ,"sonuc_baslik" ,"sonuc_aciklama" ,"last_updated"), AbstractSingleOperationMapper.KuduOperation.UPSERT)
+    new RowOperationMapper(
+      Array[String]( "systakipno" ,"kabul_zamani" ,"id" ,"idhash" ,"hizmet_sunucu" ,"radyoloji_loinc" ,"radyoloji_loinc_code" ,"islem_referans_numarasi" ,"rapor_onaylanma_zamani" ,"last_updated"),
+      AbstractSingleOperationMapper.KuduOperation.UPSERT)
   )
 
 
   private val lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source")
 
 
-  private val Rows  = lines.map(x => {
+  private val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
     val sessionSylla = ScyllaSessionBuild.getSession()
     savedOffset("appname", x.getTopic, x.getPartition, x.getOffset, sessionSylla)
     val jsonRoot = mapperScala(x.getValue)
     if (jsonRoot.content.RADYOLOJI_SONUC_KAYIT != null) {
-     jsonRoot.content.RADYOLOJI_SONUC_KAYIT.RADYOLOJI_BILGISI.zipWithIndex.foreach{ case (radyolojiBilgisi, index) =>
-          val row = parseCenter(jsonRoot)
-          parse201(radyolojiBilgisi, row, index)
+      parse201(jsonRoot)
       }
-    }
     else {
       null
     }
   })
 
+  val row: DataStream[Row] = rows.flatMap(new FlatMapFunction[util.ArrayList[Row], Row] {
+    override def flatMap(arrayList: util.ArrayList[Row], collector: Collector[Row]): Unit = {
+      val iterator = arrayList.iterator()
+      while (iterator.hasNext) {
+        collector.collect(iterator.next())
+      }
+    }
+  })
 
-  Rows.addSink(sink).name("Kudu Sink")
+  row.addSink(sink).name("Kudu Sink")
 
-    env.execute("Read from Kafka")
+  env.execute("Read from Kafka")
 
 
   def mapperScala(x:Array[Byte])= {
