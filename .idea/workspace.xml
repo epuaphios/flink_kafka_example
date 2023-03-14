@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2611ad51-3259-4773-b217-b2b929fdbbd7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/KafkaUsageRecordDeserializationSchema.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/KafkaUsageRecordDeserializationSchema.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/main.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala" afterDir="false" />
     </list>
@@ -206,7 +207,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678748063223</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="dateutil fix">
+      <created>1678831434283</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1678831434283</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -236,6 +244,11 @@
           <properties class="java.lang.IllegalArgumentException" package="java.lang" />
           <option name="timeStamp" value="9" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala</url>
+          <line>20</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <pin-to-top-manager>

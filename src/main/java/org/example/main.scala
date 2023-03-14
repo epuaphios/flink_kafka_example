@@ -69,29 +69,37 @@ object main extends App {
     }
   })
 
-  val row: DataStream[Row] = rows.flatMap(new FlatMapFunction[util.ArrayList[Row], Row] {
-    override def flatMap(arrayList: util.ArrayList[Row], collector: Collector[Row]): Unit = {
-      val iterator = arrayList.iterator()
-      while (iterator.hasNext) {
-        collector.collect(iterator.next())
+  if (rows == null) {
+    val row: DataStream[Row] = rows.flatMap(new FlatMapFunction[util.ArrayList[Row], Row] {
+      override def flatMap(arrayList: util.ArrayList[Row], collector: Collector[Row]): Unit = {
+        val iterator = arrayList.iterator()
+        while (iterator.hasNext) {
+          collector.collect(iterator.next())
+        }
       }
-    }
-  })
-
-  row.addSink(sink).name("Kudu Sink")
+    })
+  try {
+    row.addSink(sink).name("Kudu Sink")
+  } catch {
+    case e: Exception => println(e)
+  }
+  }
 
   env.execute("Read from Kafka")
 
-
   def mapperScala(x:Array[Byte])= {
-     val mapper = new ObjectMapper with ScalaObjectMapper
-     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-       .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
-       .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
-       .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
-    mapper.registerModule(DefaultScalaModule)
-    mapper.readValue(x, classOf[JsonRoot])
-     }
-
+    try {
+      val mapper = new ObjectMapper with ScalaObjectMapper
+      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
+        .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+        .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+      mapper.registerModule(DefaultScalaModule)
+      mapper.readValue(x, classOf[JsonRoot])
+    } catch {
+      case e: Exception => println(e)
+        null
+    }
+  }
 }
 

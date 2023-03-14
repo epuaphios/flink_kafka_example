@@ -12,7 +12,7 @@ object Parsers extends Helper {
 
    def parse201(jsonRoot: JsonRoot) = {
      val rows  = new java.util.ArrayList[Row]()
-
+      try {
        jsonRoot.content.RADYOLOJI_SONUC_KAYIT.RADYOLOJI_BILGISI.zipWithIndex.foreach { case (radyolojiBilgisi, index) =>
          val row = new Row(11)
          row.setField(0, jsonRoot.key)
@@ -27,11 +27,14 @@ object Parsers extends Helper {
          row.setField(9, time.LocalDateTime.now().toEpochSecond(time.ZoneOffset.UTC))
          rows.add(row)
        }
+      } catch {
+        case e: Exception => e.getMessage()
+       }
      rows
    }
 
   def murmurHash(idhash: String): String = {
-    (MurmurHash3.stringHash(idhash) + MaxValue).toString
+    (MurmurHash3.stringHash(idhash).toLong + MaxValue).toString
   }
 
 }
