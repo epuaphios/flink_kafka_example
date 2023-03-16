@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2611ad51-3259-4773-b217-b2b929fdbbd7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/KafkaUsageRecordDeserializationSchema.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/KafkaUsageRecordDeserializationSchema.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/connection/AppParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/connection/AppParameters.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/main.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/main2.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,6 +144,7 @@
       <workItem from="1678283167847" duration="949000" />
       <workItem from="1678366264864" duration="8148000" />
       <workItem from="1678566443315" duration="10817000" />
+      <workItem from="1678881410658" duration="7504000" />
     </task>
     <task id="LOCAL-00001" summary="kudu">
       <created>1678284471759</created>

@@ -23,15 +23,16 @@ import java.util
 
 object main extends App {
 
-//  val conf = new Configuration();
-//  conf.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true)
+
+
   val env = StreamExecutionEnvironment.getExecutionEnvironment
   env.setParallelism(1)
 
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-409"
+  AppParameters.APP_NAME = "flink-test"
   new ScyllaSessionBuild()
-  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, "flink-test")
+  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
 //  closeScyllaSession()
 
   private val kafkaSource = KafkaSource.builder()
@@ -44,6 +45,7 @@ object main extends App {
 
 
   private val writerConfig = KuduWriterConfig.Builder.setMasters(AppParameters.KUDU_MASTERS).build
+
 
   private val sink:KuduSink[Row] = new KuduSink(
     writerConfig,
@@ -59,7 +61,7 @@ object main extends App {
 
   private val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
     val sessionSylla = ScyllaSessionBuild.getSession()
-    savedOffset("appname", x.getTopic, x.getPartition, x.getOffset, sessionSylla)
+    savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
     val jsonRoot = mapperScala(x.getValue)
     if (jsonRoot.content.RADYOLOJI_SONUC_KAYIT != null) {
       parse201(jsonRoot)
@@ -69,7 +71,7 @@ object main extends App {
     }
   })
 
-  if (rows == null) {
+
     val row: DataStream[Row] = rows.flatMap(new FlatMapFunction[util.ArrayList[Row], Row] {
       override def flatMap(arrayList: util.ArrayList[Row], collector: Collector[Row]): Unit = {
         val iterator = arrayList.iterator()
@@ -78,12 +80,11 @@ object main extends App {
         }
       }
     })
-  try {
+
+
     row.addSink(sink).name("Kudu Sink")
-  } catch {
-    case e: Exception => println(e)
-  }
-  }
+
+
 
   env.execute("Read from Kafka")
 
