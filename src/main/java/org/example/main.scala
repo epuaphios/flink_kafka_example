@@ -24,7 +24,7 @@ import java.util
 object main extends App {
 
   val env = StreamExecutionEnvironment.getExecutionEnvironment
-  env.setParallelism(1)
+  env.setParallelism(4)
 
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-409"
