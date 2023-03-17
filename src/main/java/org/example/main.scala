@@ -23,8 +23,6 @@ import java.util
 
 object main extends App {
 
-
-
   val env = StreamExecutionEnvironment.getExecutionEnvironment
   env.setParallelism(1)
 

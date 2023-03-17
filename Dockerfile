@@ -1,7 +1,7 @@
-FROM flink:1.14.0-scala_2.12-java11
+FROM flink:1.16.0-scala_2.12-java11
 
-COPY target/flink-examples-0.0.1.jar /opt/flink/usrlib/my-job.jar
+COPY target/flink-examples-0.0.1-jar-with-dependencies.jar /opt/flink/usrlib/flink-examples-0.0.1-jar-with-dependencies.jar
 
-ENV JOB_CLASS_NAME=com.example.main
+ENV JOB_CLASS_NAME=org.example.main
 
-CMD ["/opt/flink/bin/flink", "run", "-c", "$JOB_CLASS_NAME", "/opt/flink/usrlib/my-job.jar"]
+CMD ["/opt/flink/bin/flink", "run", "-c", "$JOB_CLASS_NAME", "/opt/flink/usrlib/flink-examples-0.0.1-jar-with-dependencies.jar"]
