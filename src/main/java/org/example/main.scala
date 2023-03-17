@@ -15,7 +15,7 @@ import org.apache.flink.util.Collector
 import org.example.connection.AppParameters
 import org.example.connection.scylla.ScyllaQuery.savedOffset
 import org.example.connection.scylla.ScyllaSessionBuild
-import org.example.connection.scylla.ScyllaSessionBuild.getLastCommittedOffsets
+import org.example.connection.scylla.ScyllaSessionBuild.{closeScyllaSession, getLastCommittedOffsets}
 import org.example.packet.JsonRoot
 import org.example.parser.Parsers.parse201
 
@@ -24,14 +24,16 @@ import java.util
 object main extends App {
 
   val env = StreamExecutionEnvironment.getExecutionEnvironment
-  env.setParallelism(4)
+//  val conf =  new Configuration()
+//  val env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(conf)
+//  env.setRuntimeMode(RuntimeExecutionMode.BATCH)
 
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-409"
   AppParameters.APP_NAME = "flink-test"
   new ScyllaSessionBuild()
   val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
-//  closeScyllaSession()
+  closeScyllaSession()
 
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
@@ -54,10 +56,11 @@ object main extends App {
   )
 
 
-  private val lines = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Kafka Source")
+  val lines = env.fromSource(kafkaSource, WatermarkStrategy.forMonotonousTimestamps(), "Kafka Source").name("Kafka Source")
 
 
-  private val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
+  val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
+    new ScyllaSessionBuild()
     val sessionSylla = ScyllaSessionBuild.getSession()
     savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
     val jsonRoot = mapperScala(x.getValue)
@@ -67,24 +70,22 @@ object main extends App {
     else {
       null
     }
-  })
+  }).name("Map").rebalance
 
-
-    val row: DataStream[Row] = rows.flatMap(new FlatMapFunction[util.ArrayList[Row], Row] {
+  val row: DataStream[Row] = rows.flatMap(new FlatMapFunction[util.ArrayList[Row], Row] {
       override def flatMap(arrayList: util.ArrayList[Row], collector: Collector[Row]): Unit = {
         val iterator = arrayList.iterator()
         while (iterator.hasNext) {
           collector.collect(iterator.next())
         }
       }
-    })
+  }).name("FlatMap")
 
 
-    row.addSink(sink).name("Kudu Sink")
+  row.addSink(sink).name("Kudu Sink")
 
 
-
-  env.execute("Read from Kafka")
+  env.execute("kafka to kudu")
 
   def mapperScala(x:Array[Byte])= {
     try {
