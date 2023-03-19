@@ -61,8 +61,11 @@ object main extends App {
 
   val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
     //new ScyllaSessionBuild()
-    val sessionSylla = ScyllaSessionBuild.getSession()
-    savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
+//    val sessionSylla = ScyllaSessionBuild.getSession()
+//    savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
+    if (x.getOffset % 1000 == 0) {
+      println(x.getTopic+"->"+x.getPartition+"->"+x.getOffset)
+    }
     val jsonRoot = mapperScala(x.getValue)
     if (jsonRoot.content.RADYOLOJI_SONUC_KAYIT != null) {
       parse201(jsonRoot)
@@ -70,7 +73,7 @@ object main extends App {
     else {
       null
     }
-  }).name("Map").rebalance
+  }).name("Map")
 
   val row: DataStream[Row] = rows.flatMap(new FlatMapFunction[util.ArrayList[Row], Row] {
       override def flatMap(arrayList: util.ArrayList[Row], collector: Collector[Row]): Unit = {
@@ -79,7 +82,7 @@ object main extends App {
           collector.collect(iterator.next())
         }
       }
-  }).name("FlatMap")
+  }).uid("FlatMap").name("FlatMap")
 
 
   row.addSink(sink).name("Kudu Sink")
