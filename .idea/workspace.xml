@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2611ad51-3259-4773-b217-b2b929fdbbd7" name="Changes" comment="dateutil fix">
+    <list default="true" id="2611ad51-3259-4773-b217-b2b929fdbbd7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/connection/scylla/ScyllaQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/connection/scylla/ScyllaQuery.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/main.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -243,7 +241,21 @@
       <option name="project" value="LOCAL" />
       <updated>1679051899230</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="dateutil fix">
+      <created>1679320991169</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1679320991169</updated>
+    </task>
+    <task id="LOCAL-00015" summary="dateutil fix">
+      <created>1679321619922</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1679321619922</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -288,11 +300,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/org/example/main.scala</url>
           <line>37</line>
           <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="scala-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala</url>
-          <line>19</line>
-          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
