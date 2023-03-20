@@ -15,7 +15,6 @@ import org.apache.flink.util.Collector
 import org.example.connection.AppParameters
 import org.example.connection.scylla.ScyllaQuery.savedOffset
 import org.example.connection.scylla.ScyllaSessionBuild
-import org.example.connection.scylla.ScyllaSessionBuild.getLastCommittedOffsets
 import org.example.packet.JsonRoot
 import org.example.parser.Parsers.parse201
 
@@ -31,20 +30,21 @@ object main extends App {
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-409"
   AppParameters.APP_NAME = "flink-test"
-  new ScyllaSessionBuild()
-  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
+//  new ScyllaSessionBuild()
+//  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
   //closeScyllaSession()
 
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
     .setTopics("enabiz-mutation-409")
-    .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
-//    .setGroupId("appname")
+    .setStartingOffsets(OffsetsInitializer.latest())
+//    .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
+    .setGroupId("appname")
     .setDeserializer(new KafkaUsageRecordDeserializationSchema())
     .build()
 
 
-  private val writerConfig = KuduWriterConfig.Builder.setMasters(AppParameters.KUDU_MASTERS).build
+  private val writerConfig = KuduWriterConfig.Builder.setMasters(AppParameters.KUDU_MASTERS).setMaxBufferSize(1000).setEventualConsistency().build
 
 
   private val sink:KuduSink[Row] = new KuduSink(
@@ -56,15 +56,16 @@ object main extends App {
   )
 
 
+
   val lines = env.fromSource(kafkaSource, WatermarkStrategy.forMonotonousTimestamps(), "Kafka Source").name("Kafka Source")
 
 
   val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
-    //new ScyllaSessionBuild()
-//    val sessionSylla = ScyllaSessionBuild.getSession()
-//    savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
-    if (x.getOffset % 1000 == 0) {
-      println(x.getTopic+"->"+x.getPartition+"->"+x.getOffset)
+    if (x.getOffset % 10000 == 0) {
+      new ScyllaSessionBuild()
+      val sessionSylla = ScyllaSessionBuild.getSession()
+      savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
+      println("offset saved" + " " + x.getPartition + " " + x.getOffset + " " + x.getTopic + " ")
     }
     val jsonRoot = mapperScala(x.getValue)
     if (jsonRoot.content.RADYOLOJI_SONUC_KAYIT != null) {
@@ -82,7 +83,7 @@ object main extends App {
           collector.collect(iterator.next())
         }
       }
-  }).uid("FlatMap").name("FlatMap")
+  }).name("FlatMap")
 
 
   row.addSink(sink).name("Kudu Sink")
