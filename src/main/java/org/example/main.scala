@@ -15,7 +15,6 @@ import org.apache.flink.util.Collector
 import org.example.connection.AppParameters
 import org.example.connection.scylla.ScyllaQuery.savedOffset
 import org.example.connection.scylla.ScyllaSessionBuild
-import org.example.connection.scylla.ScyllaSessionBuild.getLastCommittedOffsets
 import org.example.packet.JsonRoot
 import org.example.parser.Parsers.parse201
 
@@ -31,15 +30,16 @@ object main extends App {
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-409"
   AppParameters.APP_NAME = "flink-test"
-  new ScyllaSessionBuild()
-  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
+//  new ScyllaSessionBuild()
+//  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
   //closeScyllaSession()
 
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
     .setTopics("enabiz-mutation-409")
-    .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
-//    .setGroupId("appname")
+    .setStartingOffsets(OffsetsInitializer.latest())
+//    .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
+    .setGroupId("appname")
     .setDeserializer(new KafkaUsageRecordDeserializationSchema())
     .build()
 
@@ -61,7 +61,7 @@ object main extends App {
 
 
   val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
-    //new ScyllaSessionBuild()
+    new ScyllaSessionBuild()
     val sessionSylla = ScyllaSessionBuild.getSession()
     savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
     val jsonRoot = mapperScala(x.getValue)
@@ -71,7 +71,7 @@ object main extends App {
     else {
       null
     }
-  }).name("Map").rebalance
+  }).name("Map")
 
   val row: DataStream[Row] = rows.flatMap(new FlatMapFunction[util.ArrayList[Row], Row] {
       override def flatMap(arrayList: util.ArrayList[Row], collector: Collector[Row]): Unit = {
