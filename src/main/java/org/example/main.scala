@@ -44,7 +44,7 @@ object main extends App {
     .build()
 
 
-  private val writerConfig = KuduWriterConfig.Builder.setMasters(AppParameters.KUDU_MASTERS).build
+  private val writerConfig = KuduWriterConfig.Builder.setMasters(AppParameters.KUDU_MASTERS).setMaxBufferSize(1000).setEventualConsistency().build
 
 
   private val sink:KuduSink[Row] = new KuduSink(
@@ -54,6 +54,7 @@ object main extends App {
       Array[String]( "systakipno" ,"kabul_zamani" ,"id" ,"idhash" ,"hizmet_sunucu" ,"radyoloji_loinc" ,"radyoloji_loinc_code" ,"islem_referans_numarasi" ,"rapor_onaylanma_zamani" ,"last_updated"),
       AbstractSingleOperationMapper.KuduOperation.UPSERT)
   )
+
 
 
   val lines = env.fromSource(kafkaSource, WatermarkStrategy.forMonotonousTimestamps(), "Kafka Source").name("Kafka Source")
