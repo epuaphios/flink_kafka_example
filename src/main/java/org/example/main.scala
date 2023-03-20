@@ -61,9 +61,12 @@ object main extends App {
 
 
   val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
-    new ScyllaSessionBuild()
-    val sessionSylla = ScyllaSessionBuild.getSession()
-    savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
+    if (x.getOffset % 10000 == 0) {
+      new ScyllaSessionBuild()
+      val sessionSylla = ScyllaSessionBuild.getSession()
+      savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
+      println("offset saved" + " " + x.getPartition + " " + x.getOffset + " " + x.getTopic + " ")
+    }
     val jsonRoot = mapperScala(x.getValue)
     if (jsonRoot.content.RADYOLOJI_SONUC_KAYIT != null) {
       parse201(jsonRoot)
