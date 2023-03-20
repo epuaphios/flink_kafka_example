@@ -29,7 +29,7 @@ object main extends App {
 
 
   AppParameters.TOPIC_NAME = "enabiz-mutation-409"
-  AppParameters.APP_NAME = "flink-test"
+  def setAppName(): Unit = AppParameters.APP_NAME = "flink-test"
 //  new ScyllaSessionBuild()
 //  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
   //closeScyllaSession()
@@ -62,6 +62,7 @@ object main extends App {
 
   val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
     if (x.getOffset % 10000 == 0) {
+      setAppName()
       new ScyllaSessionBuild()
       val sessionSylla = ScyllaSessionBuild.getSession()
       savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)

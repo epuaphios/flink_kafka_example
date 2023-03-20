@@ -11,10 +11,10 @@ public class AppParameters {
     public static String  KUDU_MASTERS ="kudu-master-0.kudu-masters.apache-kudu:7051,kudu-master-1.kudu-masters.apache-kudu:7051,kudu-master-2.kudu-masters.apache-kudu:7051";
 //
     public static String TOPIC_NAME;
-    public static  String SCYLLA_MASTERS="172.18.241.170";
-//    public static  String SCYLLA_MASTERS="simple-cluster-client.scylla";
-//    public static  int SCYLLA_PORT=9042;
-    public static  int SCYLLA_PORT=30003;
+//    public static  String SCYLLA_MASTERS="172.18.241.170";
+    public static  String SCYLLA_MASTERS="simple-cluster-scylla-scylla-rack";
+    public static  int SCYLLA_PORT=9042;
+//    public static  int SCYLLA_PORT=30003;
     public static String SCYLLA_KEYSPACES="catalog1";
     public static int DURATION_JOB=60;
     public static String JOB_BATCH_SIZE;
