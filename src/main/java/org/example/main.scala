@@ -28,15 +28,15 @@ object main extends App {
 //  env.setRuntimeMode(RuntimeExecutionMode.BATCH)
 
 
-  AppParameters.TOPIC_NAME = "topic-name"
-  AppParameters.APP_NAME = "flink-test"
+  AppParameters.TOPIC_NAME = "enabiz-mutation-409"
+  def setAppName(): Unit = AppParameters.APP_NAME = "flink-test"
 //  new ScyllaSessionBuild()
 //  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
   //closeScyllaSession()
 
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
-    .setTopics("topic-name")
+    .setTopics("enabiz-mutation-409")
     .setStartingOffsets(OffsetsInitializer.latest())
 //    .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
     .setGroupId("appname")
@@ -62,6 +62,7 @@ object main extends App {
 
   val  rows:DataStream[util.ArrayList[Row]]  = lines.map(x => {
     if (x.getOffset % 10000 == 0) {
+      setAppName()
       new ScyllaSessionBuild()
       val sessionSylla = ScyllaSessionBuild.getSession()
       savedOffset(AppParameters.APP_NAME, x.getTopic, x.getPartition, x.getOffset, sessionSylla)
