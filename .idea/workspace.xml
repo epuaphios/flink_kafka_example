@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="2611ad51-3259-4773-b217-b2b929fdbbd7" name="Changes" comment="dateutil fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/connection/scylla/ScyllaQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/connection/scylla/ScyllaQuery.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/main.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/main.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,6 +149,8 @@
       <workItem from="1678973440694" duration="25000" />
       <workItem from="1679040074769" duration="14701000" />
       <workItem from="1679220945587" duration="1638000" />
+      <workItem from="1679429163323" duration="1408000" />
+      <workItem from="1679433146773" duration="6000" />
     </task>
     <task id="LOCAL-00001" summary="kudu">
       <created>1678284471759</created>
@@ -284,11 +284,6 @@
           <properties class="java.lang.IllegalArgumentException" package="java.lang" />
           <option name="timeStamp" value="9" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="scala-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/main.scala</url>
-          <line>37</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/parser/Parsers.scala</url>
           <line>19</line>

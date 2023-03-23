@@ -28,7 +28,7 @@ object main extends App {
 //  env.setRuntimeMode(RuntimeExecutionMode.BATCH)
 
 
-  AppParameters.TOPIC_NAME = "enabiz-mutation-409"
+  AppParameters.TOPIC_NAME = "topic-name"
   AppParameters.APP_NAME = "flink-test"
 //  new ScyllaSessionBuild()
 //  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
@@ -36,7 +36,7 @@ object main extends App {
 
   private val kafkaSource = KafkaSource.builder()
     .setBootstrapServers(AppParameters.BOOTSTRAP_SERVERS)
-    .setTopics("enabiz-mutation-409")
+    .setTopics("topic-name")
     .setStartingOffsets(OffsetsInitializer.latest())
 //    .setStartingOffsets(OffsetsInitializer.offsets(fromOffsets))
     .setGroupId("appname")
