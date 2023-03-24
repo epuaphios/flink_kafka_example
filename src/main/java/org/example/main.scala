@@ -28,7 +28,7 @@ object main extends App {
 //  env.setRuntimeMode(RuntimeExecutionMode.BATCH)
 
 
-  AppParameters.TOPIC_NAME = "enabiz-mutation-409"
+  AppParameters.TOPIC_NAME = "enabiz-mutation"
   def setAppName(): Unit = AppParameters.APP_NAME = "flink-test"
 //  new ScyllaSessionBuild()
 //  val fromOffsets = getLastCommittedOffsets(AppParameters.TOPIC_NAME, AppParameters.APP_NAME)
